@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>learning_akka_maven</groupId>
+	<artifactId>learning_akka_maven</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
+
+ 
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+		</dependency>
+
+
+		<dependency>
+			<groupId>com.typesafe.akka</groupId>
+			<artifactId>akka-actor_2.11</artifactId>
+			<version>2.4.11</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.typesafe.akka</groupId>
+			<artifactId>akka-testkit_2.11</artifactId>
+			<version>2.4.11</version>
+		</dependency>
+
+		<!-- <dependency> <groupId>org.scala-lang</groupId> <artifactId>scala-library</artifactId> 
+			<version>2.12.0-M5</version> </dependency> -->
+			
+			<dependency>
+    <groupId>org.scala-lang</groupId>
+    <artifactId>scala-library</artifactId>
+    <version>2.11.8</version>
+</dependency>
+			
+<dependency>
+    <groupId>org.scala-lang.modules</groupId>
+    <artifactId>scala-java8-compat_2.11</artifactId>
+    <version>0.5.0</version>
+</dependency>
+
+	</dependencies>
+	<repositories>
+		<repository>
+			<id>central</id>
+			<name>Maven central</name>
+			<url>http://repo.maven.apache.org/maven2</url>
+		</repository>
+		<repository>
+			<id>scala-tools.org</id>
+			<name>Scala-tools Maven2 Repository</name>
+			<url>http://scala-tools.org/repo-releases</url>
+		</repository>
+		<repository>
+			<snapshots />
+			<id>typesafe-snapshots</id>
+			<name>snapshots</name>
+			<url>http://repo.typesafe.com/typesafe/snapshots</url>
+		</repository>
+
+	</repositories>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-eclipse-plugin</artifactId>
+				<configuration>
+					<downloadSources>true</downloadSources>
+					<downloadJavadocs>true</downloadJavadocs>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.5.1</version>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>

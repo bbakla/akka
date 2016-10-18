@@ -1,0 +1,5 @@
+PingActor ile PongActor arasi iletisim kurulmaya calisiliyor.
+When PingActor receives "Ping" message, it sends "Pong" message to the actor who consumes it.
+When PongActor receives "Pong" message, it sends "Ping" message to the actor who consumes it.
+
+
