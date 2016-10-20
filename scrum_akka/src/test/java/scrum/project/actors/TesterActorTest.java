@@ -1,4 +1,4 @@
-package scrum.actors.team;
+package scrum.project.actors;
 
 import org.junit.Test;
 

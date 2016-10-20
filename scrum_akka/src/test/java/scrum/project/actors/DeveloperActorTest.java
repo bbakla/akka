@@ -1,4 +1,4 @@
-package scrum.actors.team;
+package scrum.project.actors;
 
 import static scala.compat.java8.FutureConverters.toJava;
 
