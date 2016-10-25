@@ -3,11 +3,11 @@ package scrum.project.messages;
 import akka.actor.ActorRef;
 import akka.japi.Function;
 
-public final class GetStory{
+public final class GetSpecificStory{
 
     private final String identifier;
     
-    public GetStory(String identifier) {
+    public GetSpecificStory(String identifier) {
 
 	this.identifier = identifier;
     }
