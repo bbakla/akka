@@ -1,7 +1,6 @@
 package scrum.project.actors;
 
 import static scala.compat.java8.FutureConverters.toJava;
-import static org.junit.Assert.fail;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertNotNull;
 
@@ -10,7 +9,6 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Pattern;
 
 import org.junit.Test;
 
@@ -24,7 +22,6 @@ import scrum.project.messages.GiveMeTestStory;
 import scrum.project.messages.MoveNextToActiveSprint;
 import scrum.project.actors.Backlog;
 import scrum.project.actors.ScrumMasterActor;
-import scrum.project.actors.team.TesterActor;
 import scrum.project.messages.GetActiveBacklog;
 import scrum.project.messages.GetSpecificStory;
 import scrum.project.story.DevelopmentStory;

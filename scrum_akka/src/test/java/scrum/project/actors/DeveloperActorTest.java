@@ -16,6 +16,9 @@ import scala.concurrent.Future;
 import scrum.project.actors.team.DeveloperActor;
 import scrum.project.messages.CurrentlyInProgressStory;
 import scrum.project.messages.GiveMeDevelopmentStory;
+import scrum.project.messages.review.InReviewStories;
+import scrum.project.messages.review.Review;
+import scrum.project.messages.review.ReviewResult;
 import scrum.project.story.DevelopmentStory;
 import scrum.project.story.IStory;
 import scrum.project.story.Story;
@@ -63,4 +66,18 @@ public class DeveloperActorTest {
      
      assert(story.getIdentifier()).equals(currentStoryInProgress.getIdentifier());
      }
+     
+    @Test
+    public void developerCanSendAReqiewRquestToThePO() throws Exception{
+        TestActorRef<DeveloperActor> developer = TestActorRef.create(system, DeveloperActor.props());
+	TestActorRef<ProductOwnerActor> po = TestActorRef.create(system, ProductOwnerActor.props());
+	
+	CompletableFuture<Object> reviewResult = (CompletableFuture<Object>) PatternsCS.ask(po, new InReviewStories(), 1000);
+	po.tell(new Review(new DevelopmentStory("1")), developer);
+	
+	ReviewResult result = (ReviewResult) reviewResult.get();
+	
+	assert(result.getStory().getIdentifier()).equals("1");
+	
+    }
 }
