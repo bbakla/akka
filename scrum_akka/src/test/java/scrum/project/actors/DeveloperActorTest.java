@@ -1,83 +1,97 @@
 package scrum.project.actors;
 
-import static scala.compat.java8.FutureConverters.toJava;
-
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionStage;
-import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 import akka.actor.ActorSystem;
-import akka.pattern.Patterns;
+import akka.event.Logging;
+import akka.event.LoggingAdapter;
 import akka.pattern.PatternsCS;
 import akka.testkit.TestActorRef;
-import scala.concurrent.Future;
 import scrum.project.actors.team.DeveloperActor;
 import scrum.project.messages.CurrentlyInProgressStory;
 import scrum.project.messages.GiveMeDevelopmentStory;
 import scrum.project.messages.review.InReviewStories;
 import scrum.project.messages.review.Review;
-import scrum.project.messages.review.ReviewResult;
 import scrum.project.story.DevelopmentStory;
 import scrum.project.story.IStory;
 import scrum.project.story.Story;
-import scrum.project.story.StoryCategory;
 
 public class DeveloperActorTest {
 
     ActorSystem system = ActorSystem.create();
+
+    protected final LoggingAdapter LOGGER = Logging.getLogger(system, this);
 
     /**
      * When developer is done with his task, he has to start on a new Story.
      * Before that he has to take a story from the activebacklog. Active backlog
      * should send a new story once it is demanded
      * 
-     * Developer     Review           PO    Accept/Reject   Developer
-     *          -------------------->     ----------------->
-     * Developer     Question         PO    Answer   Developer
-     *          -------------------->     ----------------->
+     * Developer Review PO Accept/Reject Developer
+     * Developer Question      PO      Answer      Developer
+     *       ----------------->   -----------------> 
+
+     * Developer       Done        Tester  
+     *          ----------------->       ----------------->
+     * Developer joinMeeting       DailyMeeting
+     *         ------------------->        
+     *  Developer   GiveMeDevelopmentStory   ActiveBacklog 
+     *           -------------------------->
+     * Developer   AllAssignedStories
+     * 	        ----------------------------->
      * 
-     * Developer    Done          Tester    
-     *           ---------------->
-     *          
-     * Developer      joinMeeting     DailyMeeting
-     *           ------------------->   
-     * Developer      GiveMeDevelopmentStory     ActiveBacklog
-     *           ------------------------------>   
-     * 
-     * Developer    AllAssignedStories          
-     *           ----------------------------->
-     *     
      */
-     @Test
-     public void developerCanTakeStoryFromActiveSprintLog() throws Exception{
-     TestActorRef<DeveloperActor> developer = TestActorRef.create(system, DeveloperActor.props());
-     TestActorRef<ActiveBacklogActor> activeBacklog = TestActorRef.create(system, ActiveBacklogActor.props());
-     
-     IStory story = new DevelopmentStory("1");
-     activeBacklog.tell(story, TestActorRef.noSender());
-     
-     //activebackloga soyle ki; ona developer aktorden GiveMeDevelopmentStory geliyor
-     activeBacklog.tell(new GiveMeDevelopmentStory(), developer);
-     Thread.sleep(20);
-     CompletableFuture<Object> currentStory = (CompletableFuture<Object>) PatternsCS.ask(developer, new CurrentlyInProgressStory(), 500);
-     Story currentStoryInProgress = (Story) currentStory.get();
-     
-     assert(story.getIdentifier()).equals(currentStoryInProgress.getIdentifier());
-     }
-     
+
+    /**
+     * tests the communication between ActiveBacklog and Developer. 
+     * Developer GiveMeDevelopmentStory     ActiveBacklog 
+     *         ------------------------------>
+     * @throws Exception
+     */
     @Test
-    public void developerCanSendAReqiewRquestToThePO() throws Exception{
-        TestActorRef<DeveloperActor> developer = TestActorRef.create(system, DeveloperActor.props());
+    public void developerCanTakeStoryFromActiveSprintLog() throws Exception {
 	TestActorRef<ProductOwnerActor> po = TestActorRef.create(system, ProductOwnerActor.props());
-	
-	CompletableFuture<Object> reviewResult = (CompletableFuture<Object>) PatternsCS.ask(po, new InReviewStories(), 1000);
-	po.tell(new Review(new DevelopmentStory("1")), developer);
-	
-	ReviewResult result = (ReviewResult) reviewResult.get();
-	
-	assert(result.getStory().getIdentifier()).equals("1");
-	
+	TestActorRef<DeveloperActor> developer = TestActorRef.create(system, DeveloperActor.props(po));
+	TestActorRef<ActiveBacklogActor> activeBacklog = TestActorRef.create(system, ActiveBacklogActor.props());
+
+	IStory story = new DevelopmentStory("Gerecht sein", "1", "AKP ist nicht immer gerecht");
+	activeBacklog.tell(story, TestActorRef.noSender());
+
+	// activebackloga soyle ki; ona developer aktorden
+	// GiveMeDevelopmentStory geliyor
+	activeBacklog.tell(new GiveMeDevelopmentStory(), developer);
+	Thread.sleep(20);
+	CompletableFuture<Object> currentStory = (CompletableFuture<Object>) PatternsCS.ask(developer,
+		new CurrentlyInProgressStory(), 500);
+	Story currentStoryInProgress = (Story) currentStory.get();
+
+	assert (story.getIdentifier()).equals(currentStoryInProgress.getIdentifier());
+    }
+
+    /**
+     * tests the communication between PO and developer Developer Review PO
+     * Accept/Reject Developer --------------------> ----------------->
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void developerCanSendAReqiewRquestToThePO() throws Exception {
+	TestActorRef<ProductOwnerActor> po = TestActorRef.create(system, ProductOwnerActor.props());
+	TestActorRef<DeveloperActor> developer = TestActorRef.create(system, DeveloperActor.props(po));
+
+	Review review = new Review(new DevelopmentStory("Der Staatsanwald", "1", "Mein Bruder war ein guter Staatsanwald"));
+	po.tell(review, developer);
+	CompletableFuture<Object> storiesInReview = (CompletableFuture<Object>) PatternsCS.ask(po,
+		new InReviewStories(), 1000);
+	Map<String, IStory> result = (Map<String, IStory>) storiesInReview.get();
+
+	assertEquals(1, result.size());
+
+	// assert(result.getStory().getIdentifier()).equals("1");
+
     }
 }

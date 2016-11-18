@@ -20,7 +20,7 @@ import scala.concurrent.Future;
 import scrum.project.messages.GiveMeDevelopmentStory;
 import scrum.project.messages.GiveMeTestStory;
 import scrum.project.messages.MoveNextToActiveSprint;
-import scrum.project.actors.Backlog;
+import scrum.project.actors.BacklogActor;
 import scrum.project.actors.ScrumMasterActor;
 import scrum.project.messages.GetActiveBacklog;
 import scrum.project.messages.GetSpecificStory;
@@ -46,7 +46,7 @@ public class ActiveSprintBacklogTest {
 	TestActorRef<ActiveBacklogActor> activeBacklog = TestActorRef.create(system, ActiveBacklogActor.props());
 
 	Map<String, Object> backlog = new HashMap<>();
-	backlog.put("1", new DevelopmentStory("1"));
+	backlog.put("1", new DevelopmentStory("Story1", "1", "Wir hören voneinanders"));
 
 	activeBacklog.tell(backlog, TestActorRef.noSender());
 
@@ -65,7 +65,7 @@ public class ActiveSprintBacklogTest {
 	
 
 	Map<String, Object> backlog = new HashMap<>();
-	backlog.put("11", new TestStory("11"));
+	backlog.put("11", new TestStory("bedauern", "11", "Das Bedauern"));
 	activeBacklog.tell(backlog, TestActorRef.noSender());
 	
 	final CompletableFuture<Object> getTestStoryCf = (CompletableFuture<Object>) PatternsCS.ask(activeBacklog, new GiveMeTestStory(), 1000);
@@ -80,7 +80,7 @@ public class ActiveSprintBacklogTest {
     public void activeSprintBacklogCanGiveAllStoriesIfWanted() throws Exception {
 	TestActorRef<ActiveBacklogActor> activeBacklog = TestActorRef.create(system, ActiveBacklogActor.props());
 
-	Story story = new DevelopmentStory("1");
+	Story story = new DevelopmentStory("herausfordern", "1", "Menchen möchten die Regime eigentlich herausfordern.");
 	activeBacklog.tell(story, TestActorRef.noSender());
 
 	final CompletableFuture<Object> getBacklogListFuture = (CompletableFuture<Object>) PatternsCS.ask(activeBacklog,
@@ -94,8 +94,8 @@ public class ActiveSprintBacklogTest {
     public void activeSprintBacklogCanSendASpecificStory() throws Exception{
 	TestActorRef<ActiveBacklogActor> activeBacklogActor = TestActorRef.create(system, ActiveBacklogActor.props());
 	
-	Story story = new DevelopmentStory("q");
-	Story story2 = new DevelopmentStory("1q");
+	Story story = new DevelopmentStory("Story1", "q","Die Werbungen hat viele Tricke");
+	Story story2 = new DevelopmentStory("1q", "1q", "Ich habe den Kaffe auf meine Hemd geschüttet");
 	
 	activeBacklogActor.tell(story, TestActorRef.noSender());
 	activeBacklogActor.tell(story2, TestActorRef.noSender());
@@ -115,14 +115,14 @@ public class ActiveSprintBacklogTest {
     public void storyCanBeMovedFromSprintBacklogToTheActiveSprintBacklogBySM() throws Exception{
 	TestActorRef<ActiveBacklogActor> activeBacklogActor = TestActorRef.create(system, ActiveBacklogActor.props());
 	TestActorRef<ActiveBacklogActor> smActor = TestActorRef.create(system, ScrumMasterActor.props());
-	TestActorRef<ActiveBacklogActor> backlogActor = TestActorRef.create(system, Backlog.props());
+	TestActorRef<ActiveBacklogActor> backlogActor = TestActorRef.create(system, BacklogActor.props());
 	
-	Story story = new DevelopmentStory("q");
-	Story story2 = new DevelopmentStory("11");
-	Story story3 = new DevelopmentStory("22");
-	Story story4 = new DevelopmentStory("33");
-	Story story5 = new TestStory("35");
-	Story story6 = new TestStory("36");
+	Story story = new DevelopmentStory("abraten", "q", "ich habe ihm abgeraten, seine Team zu andern");
+	Story story2 = new DevelopmentStory("bewerben", "11", "ich have mich bei Siemens um als CEO bewerbt.");
+	Story story3 = new DevelopmentStory("Menschenkenntnis","22", "In vielen Berufen muss Man gute Menschenkentniss hat");
+	Story story4 = new DevelopmentStory("Der Flick", "33", "Es gibt ein grosser Flick auf deinen Pullover");
+	Story story5 = new TestStory("sich beklerern", "35", "Er hat sich mit Kaffee beklekert");
+	Story story6 = new TestStory("tatig sein", "36", "Ich bin als Engineer tatig");
 	
 	Map<String, IStory> stories = new HashMap<>();
 	stories.put(story.getIdentifier(), story);
