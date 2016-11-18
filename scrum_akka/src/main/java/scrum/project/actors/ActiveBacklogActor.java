@@ -24,18 +24,25 @@ import scrum.project.story.TestStory;
  * a {@link Map} is received, all content is put into the active backlog
  * 
  * Send story to the developer if {@link GiveMeDevelopmentStory} is received
- * Developer GiveMeDevelopmentStory ActiveBacklog Story Developer
- * -----------------------------> ------------------->
+ * 
+ * Developer GiveMeDevelopmentStory   ActiveBacklog   Story     Developer
+ *        -------------------------->           --------------->
  * 
  * Send story to the developer if {@link GiveMeTestStory} is received Tester
- * GiveMeTestStory ActiveBacklog Story Tester ----------------------------->
- * ------------------->
+ * 
+ *   GiveMeTestStory     ActiveBacklog        Story      Tester 
+ * ------------------->               ------------------->
  * 
  * If {@link Story} is received, save it to the backlog. Developer, SM, or PM
- * Story ActiveBacklog ----------------> If {@link GetSpecificStory} is
- * received, send the asked story. Developer, SM, or PM GetSpecificStory
- * ActiveBacklog Story ----------------------> ------------------>
  * 
+ * Story            ActiveBacklog  
+ * ---------------->
+ * 
+ * If {@link GetSpecificStory} is
+ * received, send the asked story. Developer, SM, or PM GetSpecificStory
+ *                   
+ *                   ActiveBacklog       Story 
+ *---------------------->         ------------------>
  * @author tr1b4361
  *
  */

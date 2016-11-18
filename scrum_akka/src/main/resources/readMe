@@ -1,0 +1,12 @@
+Developer
+1- test case yaz
+
+scrummasteractor
+1- receive metodunu yaz.
+
+PO
+1- backloga story koy
+
+backlogActor
+1- story alip backloga ekleyebilmeli
+2- active sprinte story eklemesi dogru degil. belki mesaj icinde active sprint actor referansini tasimak lazim.

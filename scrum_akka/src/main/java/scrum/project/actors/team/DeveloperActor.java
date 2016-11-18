@@ -10,12 +10,14 @@ import akka.actor.Status;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
 import akka.japi.pf.ReceiveBuilder;
-import scrum.project.actors.ProductOwnerActor;
 import scrum.project.messages.CurrentlyInProgressStory;
 import scrum.project.story.IStory;
 
 /**
- * Developer can say on which task she is working
+ * 1- Developer can say on which task she is working
+ * 2- Developer accepts a Story and starts working on it if there is no other assigned story to her.
+ *   If there is, it stores the story to work later
+ * she can ask for a new one.
  *  
  * @author tr1b4361
  *
@@ -29,14 +31,16 @@ public class DeveloperActor extends AbstractActor {
     private IStory inProgressStory;
     
     private ActorRef po;
+    private ActorRef backlog;
     
-    public static Props props(ActorRef productOwner) {
+    public static Props props(ActorRef productOwner, ActorRef backlog) {
 
-	return Props.create(DeveloperActor.class, ()-> new DeveloperActor(productOwner));
+	return Props.create(DeveloperActor.class, ()-> new DeveloperActor(productOwner, backlog));
     }
 
-    public DeveloperActor(ActorRef po) {
+    public DeveloperActor(ActorRef po, ActorRef backlogActor) {
 	this.po = po; 
+	this.backlog = backlogActor;
 
 	receive(ReceiveBuilder.match(CurrentlyInProgressStory.class, message -> {
 	    LOGGER.info("Currently worked story, {}, is asked from {}", inProgressStory.getIdentifier(),
@@ -55,9 +59,20 @@ public class DeveloperActor extends AbstractActor {
 
 	if (!hasAInProgressStory()) {
 	    inProgressStory = story;
+	    startWorking();
 	} else {
 	    assignedStories.put(story.getIdentifier(), story);
 	}
+    }
+
+    private void startWorking() {
+	// TODO Auto-generated method stub
+	
+    }
+
+    private void üstartWorking() {
+	// TODO Auto-generated method stub
+	
     }
 
     private boolean hasAInProgressStory() {

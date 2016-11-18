@@ -5,6 +5,7 @@ import java.util.concurrent.CompletableFuture;
 
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import akka.actor.ActorSystem;
 import akka.event.Logging;
@@ -55,8 +56,8 @@ public class DeveloperActorTest {
     @Test
     public void developerCanTakeStoryFromActiveSprintLog() throws Exception {
 	TestActorRef<ProductOwnerActor> po = TestActorRef.create(system, ProductOwnerActor.props());
-	TestActorRef<DeveloperActor> developer = TestActorRef.create(system, DeveloperActor.props(po));
 	TestActorRef<ActiveBacklogActor> activeBacklog = TestActorRef.create(system, ActiveBacklogActor.props());
+	TestActorRef<DeveloperActor> developer = TestActorRef.create(system, DeveloperActor.props(po, activeBacklog));
 
 	IStory story = new DevelopmentStory("Gerecht sein", "1", "AKP ist nicht immer gerecht");
 	activeBacklog.tell(story, TestActorRef.noSender());
@@ -73,15 +74,16 @@ public class DeveloperActorTest {
     }
 
     /**
-     * tests the communication between PO and developer Developer Review PO
-     * Accept/Reject Developer --------------------> ----------------->
-     * 
+     * tests the communication between PO and developer 
+     *  Developer   Review         PO    Accept/Reject   Developer
+     *         ------------------>     ----------------->
      * @throws Exception
      */
     @Test
-    public void developerCanSendAReqiewRquestToThePO() throws Exception {
+    public void developerCanSendAReviewRequestToThePO() throws Exception {
 	TestActorRef<ProductOwnerActor> po = TestActorRef.create(system, ProductOwnerActor.props());
-	TestActorRef<DeveloperActor> developer = TestActorRef.create(system, DeveloperActor.props(po));
+	TestActorRef<ActiveBacklogActor> activeBacklog = TestActorRef.create(system, ActiveBacklogActor.props());
+	TestActorRef<DeveloperActor> developer = TestActorRef.create(system, DeveloperActor.props(po, activeBacklog));
 
 	Review review = new Review(new DevelopmentStory("Der Staatsanwald", "1", "Mein Bruder war ein guter Staatsanwald"));
 	po.tell(review, developer);
@@ -90,8 +92,12 @@ public class DeveloperActorTest {
 	Map<String, IStory> result = (Map<String, IStory>) storiesInReview.get();
 
 	assertEquals(1, result.size());
-
-	// assert(result.getStory().getIdentifier()).equals("1");
-
     }
+    
+    @Test
+    public void developerCanTellOnWhichStoryHeIsWorking() throws Exception{
+	fail();
+    }
+    
+    
 }

@@ -23,11 +23,10 @@ import scrum.project.story.StoryStatus;
  * ProductOwner receives the stories to be reviewed. Them it stores them into a data structure.
  * Then it reviews the story. Currently reviewed story is also stored a state.
  * 
- * 
- * 
- * 
  *     InReviewStories       ProductOwner  storiesInReview 
  * ----------------------->              --------------------->
+ * 
+ * 1- PO can put story into backlog
  * 
  * @author tr1b4361
  *
@@ -52,7 +51,6 @@ public class ProductOwnerActor extends AbstractActor {
 	    
 	    Review review = (Review) message;
 	    LOGGER.info("The story {} is sent for review", review.getStory().getIdentifier());
-	    
 	    
 	    IStory story = review.getStory();
 	    agenda.addStoryToInReviewList(review);
